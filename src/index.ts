@@ -33,7 +33,7 @@ discord.on('messageCreate', m => {
   const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`
   console.log(msg)
 
-  bot.chat(msg)
+  bot.chat(msg.replace(/\n/g, ' '))
   m.react('👍')
 })
 
