@@ -28,13 +28,13 @@ discord.once('ready', () => {
 discord.login(DISCORD_TOKEN)
 
 discord.on('messageCreate', m => {
-  console.log('message', m.channel.id)
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
-  const msg = `${m.author.username}#${m.author.discriminator}: ${m.content}`
+  const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent}`
   console.log(msg)
 
   bot.chat(msg)
+  m.react('👍')
 })
 
 // this shouldn't have any decimals
@@ -246,6 +246,7 @@ function start() {
 
   bot.on('messagestr', m => {
     if (m === 'matdoesdev joined the game') return
+    if (m.startsWith(`<${bot.username}> `)) return
     if (WHISPER_REGEX.test(m)) return
     console.log('message', m)
     sendInDiscord(m)
