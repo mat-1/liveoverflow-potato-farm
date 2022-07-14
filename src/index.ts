@@ -8,16 +8,20 @@ import { Client, Intents } from 'discord.js'
 let [ HOST, PORT ] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
 
-const bot = mineflayer.createBot({
-  host: HOST,
-  port: Number(PORT),
-  username: EMAIL,
-  version: '1.18.2',
-  // if it's not an email, offline mode
-  auth: EMAIL.includes('@') ? 'microsoft' : 'mojang',
-  checkTimeoutInterval: 60 * 1000,
-  viewDistance: 'short' // 8 chunks
-})
+function makeBot() {
+  return mineflayer.createBot({
+    host: HOST,
+    port: Number(PORT),
+    username: EMAIL,
+    version: '1.18.2',
+    // if it's not an email, offline mode
+    auth: EMAIL.includes('@') ? 'microsoft' : 'mojang',
+    checkTimeoutInterval: 60 * 1000,
+    viewDistance: 'short' // 8 chunks
+  })
+}
+
+let bot = makeBot()
 
 const discord = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
@@ -291,7 +295,13 @@ function start() {
   // Log errors and kick reasons:
   bot.on('kicked', console.log)
   bot.on('error', console.log)
-  bot.on('end', console.log)
+  bot.on('end', r => {
+    console.log('kicked', r)
+    setTimeout(() => {
+      makeBot()
+      start()
+    }, 1000)
+  })
 }
 
 start()
