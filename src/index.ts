@@ -34,11 +34,13 @@ discord.login(DISCORD_TOKEN)
 discord.on('messageCreate', m => {
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
-  const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`
-  console.log(msg)
-
-  bot.chat(msg.replace(/\n/g, ' '))
-  m.react('👍')
+  const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`.replace(/\n/g, ' ')
+  if (msg.length > 256)
+    m.react('🚫')
+  else {
+    bot.chat(msg.replace(/\n/g, ' '))
+    m.react('👍')
+  }
 })
 
 // this shouldn't have any decimals
@@ -248,7 +250,8 @@ function start() {
   const USERNAME_REGEX = '(?:\\(.+\\)|\\[.+\\]|.)*?(\\w+)'
   const WHISPER_REGEX = new RegExp(`^${USERNAME_REGEX} whispers(?: to you)?:? (.*)$`)
 
-  bot.on('messagestr', m => {
+  bot.on('messagestr', (m, position) => {
+    if (position !== 'chat') return
     if (m === 'matdoesdev joined the game') return
     if (m.startsWith(`<${bot.username}> `)) return
     if (WHISPER_REGEX.test(m)) return
