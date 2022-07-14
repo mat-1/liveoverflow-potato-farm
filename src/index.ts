@@ -1,17 +1,40 @@
-import { WEBHOOK_URL, SERVER_IP, EMAIL } from './config.json'
+import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.json'
 import mineflayer, { Bot } from 'mineflayer'
 import { Block } from 'prismarine-block'
 import { Item } from 'prismarine-item'
-import { fetch } from 'undici'
 import { Vec3 } from 'vec3'
+import { Client, Intents } from 'discord.js'
+
+let [ HOST, PORT ] = SERVER_IP.split(':')
+if (!PORT) PORT = '25565'
 
 const bot = mineflayer.createBot({
-  host: SERVER_IP,
+  host: HOST,
+  port: Number(PORT),
   username: EMAIL,
   version: '1.18.2',
-  auth: 'microsoft',
+  // if it's not an email, offline mode
+  auth: EMAIL.includes('@') ? 'microsoft' : 'mojang',
   checkTimeoutInterval: 60 * 1000,
   viewDistance: 'short' // 8 chunks
+})
+
+const discord = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+discord.once('ready', () => {
+	console.log('Discord bot ready')
+})
+
+discord.login(DISCORD_TOKEN)
+
+discord.on('messageCreate', m => {
+  console.log('message', m.channel.id)
+  if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
+
+  const msg = `${m.author.username}#${m.author.discriminator}: ${m.content}`
+  console.log(msg)
+
+  bot.chat(msg)
 })
 
 // this shouldn't have any decimals
@@ -185,26 +208,24 @@ async function startFarming(bot: Bot) {
 }
 
 async function sendInDiscord(message: string) {
-  console.log(message)
-  if (!WEBHOOK_URL) return
-  const r = await fetch(
-    WEBHOOK_URL,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        content: message
-      })
-    }
-  )
-  if (r.status === 429) {
-    console.log('Ratelimited, trying again')
-    const retry = Number(r.headers.get('x-ratelimit-reset-after'))
-    await new Promise(resolve => setTimeout(resolve, retry * 1000))
-    await sendInDiscord(message)
+  if (!discord) return
+  const channel = discord.channels.cache.get(DISCORD_CHANNEL_ID) || (await discord.channels.fetch(DISCORD_CHANNEL_ID))
+  if (!channel) {
+    console.log('no channel')
+    return
   }
+  if (channel.type !== 'GUILD_TEXT') {
+    console.log('channel is not text')
+    return
+  }
+  await channel.send({
+    content: message,
+    allowedMentions: {
+      parse: [],
+      users: [],
+      roles: []
+    }
+  })
 }
 
 function start() {
@@ -226,9 +247,8 @@ function start() {
   bot.on('messagestr', m => {
     if (m === 'matdoesdev joined the game') return
     if (WHISPER_REGEX.test(m)) return
-    const messageSafe = m.replace(/@/g, '@ ')
-    console.log('message', messageSafe)
-    sendInDiscord(messageSafe)
+    console.log('message', m)
+    sendInDiscord(m)
   })
 
 
