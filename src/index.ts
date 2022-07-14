@@ -30,7 +30,7 @@ discord.login(DISCORD_TOKEN)
 discord.on('messageCreate', m => {
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
-  const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent}`
+  const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`
   console.log(msg)
 
   bot.chat(msg)
