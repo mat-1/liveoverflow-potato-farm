@@ -251,7 +251,7 @@ function start() {
   const WHISPER_REGEX = new RegExp(`^${USERNAME_REGEX} whispers(?: to you)?:? (.*)$`)
 
   bot.on('messagestr', (m, position) => {
-    if (position !== 'chat') return
+    if (position === 'game_info') return
     if (m === 'matdoesdev joined the game') return
     if (m.startsWith(`<${bot.username}> `)) return
     if (WHISPER_REGEX.test(m)) return
