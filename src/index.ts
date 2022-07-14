@@ -1,9 +1,9 @@
+import { WEBHOOK_URL, SERVER_IP, EMAIL } from './config.json'
 import mineflayer, { Bot } from 'mineflayer'
 import { Block } from 'prismarine-block'
 import { Item } from 'prismarine-item'
 import { fetch } from 'undici'
 import { Vec3 } from 'vec3'
-import { WEBHOOK_URL, SERVER_IP, EMAIL } from './config'
 
 const bot = mineflayer.createBot({
   host: SERVER_IP,
