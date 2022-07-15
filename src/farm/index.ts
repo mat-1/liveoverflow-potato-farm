@@ -52,10 +52,12 @@ export async function startFarming(bot: Bot) {
 
 		let tickListener = async () => {
 			tickCount++
-			if (tickCount % 4 != 0) return
+			if (tickCount % 3 !== 0) return
 
 			// we pause while doing async stuff
 			if (paused) return
+
+			let [botPositionIndex, _] = getLineAndIndexFromPos(bot.entity.position)
 
 			let willVisitAll = true
 			for (let line = startLine; line <= endLine; line++) {
@@ -65,6 +67,7 @@ export async function startFarming(bot: Bot) {
 				if (!canReachBlock(bot, block))
 					willVisitAll = false
 			}
+			if (index - 1 > botPositionIndex) willVisitAll = false
 			if (!willVisitAll) {
 				// wait until we get closer
 				return
@@ -167,6 +170,16 @@ export async function startFarming(bot: Bot) {
 function getLineAndIndexPos(line: number, index: number) {
 	return new Vec3(START_POS.x - line, START_POS.y, START_POS.z + index)
 }
+
+function getLineAndIndexFromPos(pos: Vec3) {
+	return [
+		// line
+		START_POS.x - Math.floor(pos.x),
+		// index
+		Math.floor(pos.z) - START_POS.z,
+	]
+}
+
 
 function shouldVisit(bot: Bot, block: Block) {
 	if (isFullyGrownCrop(block))
