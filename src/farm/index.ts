@@ -44,7 +44,7 @@ export async function startFarming(bot: Bot) {
 		currentValidLines = currentValidLines.filter(line => line > endLine)
 
 		await gotoLineAndIndex(bot, centerLine, 0)
-		const gotoEndLinePromise = gotoLineAndIndex(bot, centerLine, FARM_LENGTH)
+		const gotoEndLinePromise = gotoLineAndIndex(bot, centerLine, FARM_LENGTH, false)
 
 		let index = 0
 		let paused = false
@@ -212,9 +212,9 @@ function blockAtLineAndIndex(bot: Bot, line: number, index: number) {
 	return bot.blockAt(getLineAndIndexPos(line, index))
 }
 
-async function gotoLineAndIndex(bot: Bot, line: number, index: number) {
+async function gotoLineAndIndex(bot: Bot, line: number, index: number, sprint = true) {
 	const pos = getLineAndIndexPos(line, index)
-	await goto(bot, pos, true)
+	await goto(bot, pos, sprint)
 }
 
 async function holdHoe(bot: Bot) {
