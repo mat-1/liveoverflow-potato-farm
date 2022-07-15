@@ -74,7 +74,7 @@ function start() {
   bot.on('spawn', () => {
     if (!spawned)
       // wait for chunks to load and stuff
-      setTimeout(() => startFarming(bot), 2000)
+      setTimeout(() => startFarming(bot), 4000)
 
     spawned = true
     console.log('spawned')
