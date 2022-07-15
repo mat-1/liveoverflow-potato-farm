@@ -2,6 +2,7 @@ import mineflayer, { Bot } from 'mineflayer'
 import { Block } from 'prismarine-block'
 import { Item } from 'prismarine-item'
 import { Vec3 } from 'vec3'
+import { holdCrop } from './farm'
 import { START_POS } from './farm/constants'
 
 
@@ -86,5 +87,24 @@ export async function gotoNear(bot: Bot, pos: Vec3, range: number, sprint = true
 	await gotoWithCheck(bot, pos, (botPos: Vec3) => {
 		return Math.abs(botPos.x - pos.x) <= range && Math.abs(botPos.z - pos.z) <= range
 	}, sprint)
+}
+
+
+export async function eatUntilFull(bot: Bot) {
+	// @ts-expect-error usingHeldItem doesn't have typings
+	if (bot.usingHeldItem || !spawned || !bot.canEat) return
+	if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
+		try {
+			if (await holdCrop(bot)) {
+				while (bot.food < 20) {
+					// @ts-expect-error usingHeldItem doesn't have typings
+					if (bot.usingHeldItem || !bot.canEat) return
+					await bot.consume()
+				}
+			}
+		} catch (e) {
+			console.log('error eating', e)
+		}
+	}
 }
 

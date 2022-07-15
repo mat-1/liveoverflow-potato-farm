@@ -3,7 +3,7 @@ import { Block } from 'prismarine-block'
 import { Item } from 'prismarine-item'
 import windowLoader from 'prismarine-windows'
 import { Vec3 } from 'vec3'
-import { cancelGoto, goto, gotoNear } from '../utils'
+import { cancelGoto, eatUntilFull, goto, gotoNear } from '../utils'
 import { DEPOSIT_CHEST, END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STORAGE_AREA, STRIP_WIDTH } from './constants'
 
 const { Window } = windowLoader('1.18.2')
@@ -318,6 +318,7 @@ async function depositInventory(bot: Bot) {
 			await bot.tossStack(item)
 		}
 	}
+	await eatUntilFull(bot)
 
 
 	const chest = await openChestWithSpace(bot)
