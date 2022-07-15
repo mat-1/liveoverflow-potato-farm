@@ -35,9 +35,12 @@ discord.on('messageCreate', m => {
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
   const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`.replace(/\n/g, ' ')
-  if (msg.length > 256)
+//   public static boolean isAllowedChatCharacter(char var0) {
+//     return var0 != 167 && var0 >= ' ' && var0 != 127;
+//  }
+  if (msg.length > 256 || msg.startsWith('/') || /[^\x00-\x20\x7F\xA7]/.test(msg)) {
     m.react('🚫')
-  else {
+  } else {
     bot.chat(msg.replace(/\n/g, ' '))
     m.react('👍')
   }
