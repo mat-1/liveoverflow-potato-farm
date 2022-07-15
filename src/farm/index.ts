@@ -131,6 +131,11 @@ export async function startFarming(bot: Bot) {
 		// TODO: skip indexes that don't have items
 		index = 0
 		while (index < FARM_LENGTH) {
+			// if we're close to running out of slots, deposit our stuff
+			if (bot.inventory.emptySlotCount() <= 2) {
+				await depositInventory(bot)
+			}
+
 			await gotoLineAndIndex(bot, startLine, FARM_LENGTH - index)
 			index += 2
 			await gotoLineAndIndex(bot, endLine, FARM_LENGTH - index)
