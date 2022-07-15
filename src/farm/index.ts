@@ -4,7 +4,7 @@ import { Item } from 'prismarine-item'
 import windowLoader from 'prismarine-windows'
 import { Vec3 } from 'vec3'
 import { cancelGoto, goto, gotoNear } from '../utils'
-import { END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STORAGE_AREA, STRIP_WIDTH } from './constants'
+import { DEPOSIT_CHEST, END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STORAGE_AREA, STRIP_WIDTH } from './constants'
 
 const { Window } = windowLoader('1.18.2')
 
@@ -292,15 +292,23 @@ function getPotentialChests(bot: Bot) {
 }
 
 async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> {
-	const potentialChests = getPotentialChests(bot)
-	for (const chestPos of potentialChests) {
-		const chestBlock = bot.blockAt(chestPos)
-		if (!chestBlock) throw new Error('no chest block')
-		const chest = await openIfChestHasSpace(bot, chestBlock)
-		if (chest) {
-			return chest
-		}
+	// const potentialChests = getPotentialChests(bot)
+	// for (const chestPos of potentialChests) {
+	// 	const chestBlock = bot.blockAt(chestPos)
+	// 	if (!chestBlock) throw new Error('no chest block')
+	// 	const chest = await openIfChestHasSpace(bot, chestBlock)
+	// 	if (chest) {
+	// 		return chest
+	// 	}
+	// }
+	const chestBlock = bot.blockAt(DEPOSIT_CHEST)
+	if (!chestBlock) throw new Error('no chest block')
+	await gotoNear(bot, chestBlock.position, 5)
+	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
+	if (!chest) {
+		throw new Error('can\'t open chest')
 	}
+	return chest
 }
 
 async function depositInventory(bot: Bot) {
