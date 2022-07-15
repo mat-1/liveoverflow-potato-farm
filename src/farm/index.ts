@@ -64,7 +64,6 @@ export async function startFarming(bot: Bot) {
 				// wait until we get closer
 				return
 			}
-			console.log('ok')
 
 			paused = true
 
@@ -233,6 +232,7 @@ export async function holdCrop(bot: Bot) {
 
 
 async function activateBlock(bot: Bot, block: Block) {
+	console.log('placing at', block.position)
 	bot._client.write('block_place', {
 		location: block.position,
 		direction: 1,
