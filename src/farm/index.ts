@@ -82,14 +82,12 @@ export async function startFarming(bot: Bot) {
 				if (!block)
 					throw new Error('no block at line ' + line + ' index ' + index)
 
-				if (canReachBlock(bot, block)) {
-					if (isFullyGrownCrop(block)) {
-						await holdCrop(bot)
-						try {
-							await bot.dig(block, 'ignore')
-						} catch (e) {
-							console.log('error digging', e)
-						}
+				if (isFullyGrownCrop(block)) {
+					await holdCrop(bot)
+					try {
+						await bot.dig(block, 'ignore')
+					} catch (e) {
+						console.log('error digging', e)
 					}
 				}
 			}
@@ -100,16 +98,14 @@ export async function startFarming(bot: Bot) {
 				if (!block)
 					throw new Error('no block at line ' + line + ' index ' + index)
 
-				if (canReachBlock(bot, block)) {
-					if (block.name === 'air') {
-						const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
-						if (!blockBelow) throw new Error('no block below')
-						if (blockBelow.name === 'dirt') {
-							if (!await holdHoe(bot))
-								// no hoes?
-								break
-							activateBlock(bot, blockBelow)
-						}
+				if (block.name === 'air') {
+					const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
+					if (!blockBelow) throw new Error('no block below')
+					if (blockBelow.name === 'dirt') {
+						if (!await holdHoe(bot))
+							// no hoes?
+							break
+						activateBlock(bot, blockBelow)
 					}
 				}
 			}
@@ -120,12 +116,10 @@ export async function startFarming(bot: Bot) {
 				if (!block)
 					throw new Error('no block at line ' + line + ' index ' + index)
 
-				if (canReachBlock(bot, block)) {
-					const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
-					if (!blockBelow) throw new Error('no block below')
-					if (blockBelow.name === 'farmland' && await holdCrop(bot))
-						activateBlock(bot, blockBelow)
-				}
+				const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
+				if (!blockBelow) throw new Error('no block below')
+				if (block.name === 'air' && blockBelow.name === 'farmland' && await holdCrop(bot))
+					activateBlock(bot, blockBelow)
 			}
 
 			paused = false
