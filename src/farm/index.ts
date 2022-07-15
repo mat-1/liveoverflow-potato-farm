@@ -57,7 +57,7 @@ export async function startFarming(bot: Bot) {
 			// we pause while doing async stuff
 			if (paused) return
 
-			let [botPositionIndex, _] = getLineAndIndexFromPos(bot.entity.position)
+			let [_, botPositionIndex] = getLineAndIndexFromPos(bot.entity.position)
 
 			let willVisitAll = true
 			for (let line = startLine; line <= endLine; line++) {
