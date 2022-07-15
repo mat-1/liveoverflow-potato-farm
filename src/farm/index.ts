@@ -32,7 +32,7 @@ export async function startFarming(bot: Bot) {
 			console.log('Everything is farmed! Waiting 60 seconds')
 			await depositInventory(bot)
 			await new Promise(resolve => setTimeout(resolve, 60000))
-			continue
+			return
 		}
 		const endLine = Math.min(startLine + STRIP_WIDTH - 1, FARM_WIDTH)
 		const centerLine = endLine + (startLine - endLine) / 2
@@ -62,7 +62,6 @@ export async function startFarming(bot: Bot) {
 			// we pause while doing async stuff
 			if (paused) return
 
-			let [_, botPositionIndex] = getLineAndIndexFromPos(bot.entity.position)
 
 			let willVisitAll = true
 			for (let line = startLine; line <= endLine; line++) {
