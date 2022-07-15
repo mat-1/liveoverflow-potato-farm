@@ -38,7 +38,7 @@ discord.on('messageCreate', m => {
 //   public static boolean isAllowedChatCharacter(char var0) {
 //     return var0 != 167 && var0 >= ' ' && var0 != 127;
 //  }
-  if (msg.length > 256 || msg.startsWith('/') || /[^\x00-\x20\x7F\xA7]/.test(msg)) {
+  if (msg.length > 256 || msg.startsWith('/') || /[\x00-\x1F\x7F\xA7]/.test(msg)) {
     m.react('🚫')
   } else {
     bot.chat(msg.replace(/\n/g, ' '))
