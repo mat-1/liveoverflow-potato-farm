@@ -60,9 +60,11 @@ export async function startFarming(bot: Bot) {
 				if (!canReachBlock(bot, block))
 					willVisitAll = false
 			}
-			if (!willVisitAll)
+			if (!willVisitAll) {
+				console.log('...')
 				// wait until we get closer
 				return
+			}
 
 			paused = true
 
