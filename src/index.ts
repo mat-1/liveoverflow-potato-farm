@@ -110,7 +110,7 @@ function start() {
           await bot.consume()
         }
       } catch (e) {
-        console.log('error eating', e)
+        console.log('error eating', e, bot.usingHeldItem)
       }
     }
   })
