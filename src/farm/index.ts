@@ -61,10 +61,10 @@ export async function startFarming(bot: Bot) {
 					willVisitAll = false
 			}
 			if (!willVisitAll) {
-				console.log('...')
 				// wait until we get closer
 				return
 			}
+			console.log('ok')
 
 			paused = true
 
