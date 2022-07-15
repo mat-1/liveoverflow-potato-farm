@@ -217,7 +217,6 @@ async function holdHoe(bot: Bot) {
 export async function holdCrop(bot: Bot) {
 
 	if (bot.heldItem?.name === 'potato') {
-		console.log('already holding potato')
 		return true
 	} for (const item of bot.inventory.items()) {
 		if (item.name === 'potato') {
