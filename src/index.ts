@@ -102,7 +102,7 @@ function start() {
   bot.on('health', async () => {
     // @ts-expect-error usingHeldItem doesn't have typings
     if (bot.usingHeldItem || !spawned || !bot.canEat) return
-    if (bot.health < 20 && bot.food < 20) {
+    if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
       try {
         await holdCrop(bot)
         console.log('eating')
