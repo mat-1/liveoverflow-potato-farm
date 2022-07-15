@@ -272,7 +272,7 @@ async function openIfChestHasSpace(bot: Bot, chestBlock: Block): Promise<typeof 
 		if (!cachedChestHasSpace.get(positionKey))
 			return undefined
 	}
-	await gotoNear(bot, chestBlock.position, 5)
+	await gotoNear(bot, chestBlock.position, 3)
 	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
 	if (!chest) {
 		throw new Error('can\'t open chest')
