@@ -1,7 +1,7 @@
 import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.json'
 import mineflayer, { Bot } from 'mineflayer'
 import { Client, Intents } from 'discord.js'
-import { startFarming } from './farm'
+import { holdCrop, startFarming } from './farm'
 
 let [HOST, PORT] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
@@ -104,9 +104,11 @@ function start() {
     if (bot.usingHeldItem || !spawned) return
     if (bot.health < 20 && bot.food < 20) {
       try {
+        await holdCrop(bot)
+        console.log('eating')
         await bot.consume()
-      } catch {
-
+      } catch (e) {
+        console.log('error eating', e)
       }
     }
   })
