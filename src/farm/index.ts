@@ -6,7 +6,7 @@ import { Vec3 } from 'vec3'
 import { cancelGoto, eatUntilFull, goto, gotoNear } from '../utils'
 import { DEPOSIT_CHEST, END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STORAGE_AREA, STRIP_WIDTH } from './constants'
 
-const { Window } = windowLoader('1.18.2')
+const { Window: PWindow } = windowLoader('1.18.2')
 
 
 export async function startFarming(bot: Bot) {
@@ -67,8 +67,11 @@ export async function startFarming(bot: Bot) {
 			let willVisitAll = true
 			for (let line = startLine; line <= endLine; line++) {
 				const block = blockAtLineAndIndex(bot, line, index)
-				if (!block)
-					throw new Error('no block at line ' + line + ' index ' + index)
+				if (!block) {
+					console.log('no block at line ' + line + ' index ' + index)
+					await new Promise(resolve => setTimeout(resolve, 1000))
+					continue
+				}
 				if (!canReachBlock(bot, block))
 					willVisitAll = false
 			}
@@ -83,8 +86,11 @@ export async function startFarming(bot: Bot) {
 			// digging crops
 			for (let line = startLine; line <= endLine; line++) {
 				const block = blockAtLineAndIndex(bot, line, index)
-				if (!block)
-					throw new Error('no block at line ' + line + ' index ' + index)
+				if (!block) {
+					console.log('no block at line ' + line + ' index ' + index)
+					await new Promise(resolve => setTimeout(resolve, 1000))
+					continue
+				}
 
 				if (isFullyGrownCrop(block)) {
 					await holdCrop(bot)
@@ -269,7 +275,7 @@ function canReachBlock(bot: Bot, block: Block) {
 
 
 
-async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> {
+async function openChestWithSpace(bot: Bot): Promise<typeof PWindow | undefined> {
 	// const potentialChests = getPotentialChests(bot)
 	// for (const chestPos of potentialChests) {
 	// 	const chestBlock = bot.blockAt(chestPos)
@@ -282,7 +288,7 @@ async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> 
 	const chestBlock = bot.blockAt(DEPOSIT_CHEST)
 	if (!chestBlock) throw new Error('no chest block')
 	await gotoNear(bot, chestBlock.position, 3)
-	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
+	const chest = await bot.openContainer(chestBlock) as any as typeof PWindow | undefined
 	if (!chest) {
 		throw new Error('can\'t open chest')
 	}
