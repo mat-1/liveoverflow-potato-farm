@@ -247,7 +247,7 @@ async function activateBlock(bot: Bot, block: Block) {
 
 // code from bot.canDigBlock
 function canReachBlock(bot: Bot, block: Block) {
-	return block.position.offset(0.5, 0.5, 0.5).distanceTo(bot.entity.position.offset(0, 1.65, 0)) <= 3
+	return block.position.offset(0.5, 0.5, 0.5).distanceTo(bot.entity.position.offset(0, 1.65, 0)) <= 5.1
 }
 
 
