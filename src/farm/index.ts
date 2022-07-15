@@ -364,12 +364,11 @@ async function depositInventory(bot: Bot) {
 		cropItemCount = emptySlots * 64
 	}
 
-	console.log('depositing', cropItemCount)
 	try {
 		await chest.deposit(cropItemType, null, cropItemCount)
 	} catch (e) {
 		// if it errored that means the destination is full, so try again
 		console.log('Error depositing crop:', e)
-		await depositInventory(bot)
+		// await depositInventory(bot)
 	}
 }
