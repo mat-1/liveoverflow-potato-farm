@@ -321,6 +321,9 @@ async function depositInventory(bot: Bot) {
 		return
 	}
 
+	cropItemCount -= 64
+	if (cropItemCount <= 0) return
+
 	try {
 		await chest.deposit(cropItemType, null, cropItemCount)
 	} catch {
