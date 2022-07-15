@@ -264,45 +264,6 @@ function canReachBlock(bot: Bot, block: Block) {
 }
 
 
-const cachedChestHasSpace: Map<string, boolean> = new Map()
-async function openIfChestHasSpace(bot: Bot, chestBlock: Block): Promise<typeof Window | undefined> {
-	const positionKey = chestBlock.position.toString()
-	if (cachedChestHasSpace.has(positionKey)) {
-		// if we remember this chest doesn't have any space, don't open it
-		if (!cachedChestHasSpace.get(positionKey))
-			return undefined
-	}
-	await gotoNear(bot, chestBlock.position, 3)
-	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
-	if (!chest) {
-		throw new Error('can\'t open chest')
-	}
-	console.log('chest.firstEmptyContainerSlot()', chest.firstEmptyContainerSlot())
-	const hasSpace = chest.firstEmptyContainerSlot() !== null
-	console.log('hasSpace', hasSpace)
-	if (!hasSpace) {
-		chest.close()
-		cachedChestHasSpace.set(positionKey, false)
-		return undefined
-	}
-	cachedChestHasSpace.set(positionKey, true)
-	return chest
-}
-
-function getPotentialChests(bot: Bot) {
-	return bot.findBlocks({
-		point: STORAGE_AREA,
-		matching: (block) => {
-			if (block.name !== 'chest') return false
-			// open the left part of double chests
-			if (block.getProperties().type !== 'left') return false
-			return true
-		},
-		// make sure we get all the chests
-		count: 10000000,
-		maxDistance: 64
-	})
-}
 
 async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> {
 	// const potentialChests = getPotentialChests(bot)
@@ -316,7 +277,7 @@ async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> 
 	// }
 	const chestBlock = bot.blockAt(DEPOSIT_CHEST)
 	if (!chestBlock) throw new Error('no chest block')
-	await gotoNear(bot, chestBlock.position, 5)
+	await gotoNear(bot, chestBlock.position, 3)
 	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
 	if (!chest) {
 		throw new Error('can\'t open chest')
