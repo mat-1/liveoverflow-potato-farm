@@ -15,4 +15,4 @@ export const FARM_LENGTH = Math.abs(END_POS.z - START_POS.z)
 
 
 // how many lines to farm at once
-export const STRIP_WIDTH = 3
+export const STRIP_WIDTH = 7
