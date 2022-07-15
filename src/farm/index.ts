@@ -167,7 +167,6 @@ function shouldVisit(bot: Bot, block: Block) {
 		return true
 	const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
 	if (!blockBelow) throw new Error('no block below')
-	console.log('blockBelow', blockBelow.name)
 	if (blockBelow.name === 'dirt' || blockBelow.name === 'farmland')
 		return true
 	return false
