@@ -92,7 +92,7 @@ export async function gotoNear(bot: Bot, pos: Vec3, range: number, sprint = true
 
 export async function eatUntilFull(bot: Bot) {
 	// @ts-expect-error usingHeldItem doesn't have typings
-	if (bot.usingHeldItem || !spawned || !bot.canEat) return
+	if (bot.usingHeldItem || !bot.canEat) return
 	if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
 		try {
 			if (await holdCrop(bot)) {
