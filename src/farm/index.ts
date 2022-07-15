@@ -28,8 +28,12 @@ export async function startFarming(bot: Bot) {
 	while (true) {
 		bot.canEat = false
 		const startLine = currentValidLines.shift()
-		if (startLine === undefined)
-			throw new Error('no valid lines')
+		if (startLine === undefined) {
+			console.log('Everything is farmed! Waiting 60 seconds')
+			await depositInventory(bot)
+			await new Promise(resolve => setTimeout(resolve, 60000))
+			continue
+		}
 		const endLine = Math.min(startLine + STRIP_WIDTH - 1, FARM_WIDTH)
 		const centerLine = endLine + (startLine - endLine) / 2
 
