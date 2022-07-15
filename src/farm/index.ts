@@ -141,9 +141,9 @@ export async function startFarming(bot: Bot) {
 
 			bot.canEat = true
 			await gotoLineAndIndex(bot, startLine, FARM_LENGTH - index)
-			index += 2
+			index += 1.5
 			await gotoLineAndIndex(bot, endLine, FARM_LENGTH - index)
-			index += 2
+			index += 1.5
 			bot.canEat = false
 		}
 		await gotoLineAndIndex(bot, startLine, 0)
