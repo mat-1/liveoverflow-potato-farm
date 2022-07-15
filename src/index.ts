@@ -101,7 +101,7 @@ function start() {
 
   bot.on('health', async () => {
     // @ts-expect-error usingHeldItem doesn't have typings
-    if (bot.usingHeldItem || !spawned) return
+    if (bot.usingHeldItem || !spawned || !bot.canEat) return
     if (bot.health < 20 && bot.food < 20) {
       try {
         await holdCrop(bot)
@@ -124,6 +124,14 @@ function start() {
       start()
     }, 1000)
   })
+
+  bot.canEat = true
 }
 
 start()
+
+declare module 'mineflayer' {
+  interface Bot {
+    canEat: boolean
+  }
+}

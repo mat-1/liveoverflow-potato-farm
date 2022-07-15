@@ -26,6 +26,7 @@ export async function startFarming(bot: Bot) {
 
 	// bot will start farming now
 	while (true) {
+		bot.canEat = false
 		const startLine = currentValidLines.shift()
 		if (startLine === undefined)
 			throw new Error('no valid lines')
@@ -136,10 +137,12 @@ export async function startFarming(bot: Bot) {
 				await depositInventory(bot)
 			}
 
+			bot.canEat = true
 			await gotoLineAndIndex(bot, startLine, FARM_LENGTH - index)
 			index += 2
 			await gotoLineAndIndex(bot, endLine, FARM_LENGTH - index)
 			index += 2
+			bot.canEat = false
 		}
 		await gotoLineAndIndex(bot, startLine, 0)
 
@@ -148,6 +151,7 @@ export async function startFarming(bot: Bot) {
 			await depositInventory(bot)
 		}
 
+		bot.canEat = true
 	}
 }
 
