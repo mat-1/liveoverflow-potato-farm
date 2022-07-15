@@ -301,7 +301,7 @@ function start() {
   bot.on('end', r => {
     console.log('kicked', r)
     setTimeout(() => {
-      makeBot()
+      bot = makeBot()
       start()
     }, 1000)
   })
