@@ -53,6 +53,7 @@ export async function startFarming(bot: Bot) {
 		let tickListener = async () => {
 			tickCount++
 			if (tickCount % 5 !== 0) return
+			console.log('.')
 
 			// we pause while doing async stuff
 			if (paused) return
@@ -132,9 +133,10 @@ export async function startFarming(bot: Bot) {
 			index++
 		}
 
-		bot.addListener('physicsTick', tickListener)
+		bot.on('physicsTick', tickListener)
 		await gotoEndLinePromise
-		bot.removeListener('physicsTick', tickListener)
+		bot.off('physicsTick', tickListener)
+		console.log('got to end of line')
 
 		// finished doing strip, now go back and pick up the items
 
