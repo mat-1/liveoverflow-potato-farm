@@ -48,7 +48,12 @@ export async function startFarming(bot: Bot) {
 
 		let index = 0
 		let paused = false
+		let tickCount = 0
+
 		let tickListener = async () => {
+			tickCount++
+			if (tickCount % 2 == 1) return
+
 			// we pause while doing async stuff
 			if (paused) return
 
@@ -231,7 +236,7 @@ export async function holdCrop(bot: Bot) {
 }
 
 
-async function activateBlock(bot: Bot, block: Block) {
+function activateBlock(bot: Bot, block: Block) {
 	console.log('placing at', block.position)
 	bot._client.write('block_place', {
 		location: block.position,
