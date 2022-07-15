@@ -356,6 +356,13 @@ async function depositInventory(bot: Bot) {
 
 	cropItemCount -= 64
 	if (cropItemCount <= 0) return
+	let emptySlots = 0
+	for (let i = 0; i < chest.inventoryStart; ++i) {
+		if (!chest.slots[i]) emptySlots += 1
+	}
+	if (cropItemCount > emptySlots * 64) {
+		cropItemCount = emptySlots * 64
+	}
 
 	console.log('depositing', cropItemCount)
 	try {
