@@ -104,9 +104,10 @@ function start() {
     if (bot.usingHeldItem || !spawned || !bot.canEat) return
     if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
       try {
-        await holdCrop(bot)
-        console.log('eating')
-        await bot.consume()
+        if (await holdCrop(bot)) {
+          console.log('eating')
+          await bot.consume()
+        }
       } catch (e) {
         console.log('error eating', e)
       }
