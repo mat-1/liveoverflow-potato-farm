@@ -331,7 +331,10 @@ async function depositInventory(bot: Bot) {
 			await bot.tossStack(item)
 		}
 	}
+
+	console.log('eating until full')
 	await eatUntilFull(bot)
+	console.log('ate until full')
 
 
 	const chest = await openChestWithSpace(bot)
