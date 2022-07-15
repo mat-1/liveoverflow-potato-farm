@@ -1,13 +1,20 @@
 import { Bot } from 'mineflayer'
 import { Block } from 'prismarine-block'
 import { Item } from 'prismarine-item'
+import windowLoader from 'prismarine-windows'
 import { Vec3 } from 'vec3'
-import { cancelGoto, goto } from '../utils'
-import { END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STRIP_WIDTH } from './constants'
+import { cancelGoto, goto, gotoNear } from '../utils'
+import { END_POS, FARM_LENGTH, FARM_WIDTH, START_POS, STORAGE_AREA, STRIP_WIDTH } from './constants'
 
+const { Window } = windowLoader('1.18.2')
 
 
 export async function startFarming(bot: Bot) {
+	// if we're close to running out of slots, deposit our stuff
+	if (bot.inventory.emptySlotCount() <= 2) {
+		await depositInventory(bot)
+	}
+
 	// pre-calculations
 	const lineCount = Math.abs(END_POS.x - START_POS.x)
 	const validLines: number[] = []
@@ -88,7 +95,8 @@ export async function startFarming(bot: Bot) {
 						if (!blockBelow) throw new Error('no block below')
 						if (blockBelow.name === 'dirt') {
 							if (!await holdHoe(bot))
-								throw new Error('no hoes?')
+								// no hoes?
+								break
 							activateBlock(bot, blockBelow)
 						}
 					}
@@ -104,7 +112,7 @@ export async function startFarming(bot: Bot) {
 				if (canReachBlock(bot, block)) {
 					const blockBelow = bot.blockAt(block.position.offset(0, -1, 0))
 					if (!blockBelow) throw new Error('no block below')
-					if (await holdCrop(bot))
+					if (blockBelow.name === 'farmland' && await holdCrop(bot))
 						activateBlock(bot, blockBelow)
 				}
 			}
@@ -129,6 +137,12 @@ export async function startFarming(bot: Bot) {
 			index += 2
 		}
 		await gotoLineAndIndex(bot, startLine, 0)
+
+		// if we're close to running out of slots, deposit our stuff
+		if (bot.inventory.emptySlotCount() <= 2) {
+			await depositInventory(bot)
+		}
+
 	}
 }
 
@@ -218,4 +232,94 @@ async function activateBlock(bot: Bot, block: Block) {
 // code from bot.canDigBlock
 function canReachBlock(bot: Bot, block: Block) {
 	return block.position.offset(0.5, 0.5, 0.5).distanceTo(bot.entity.position.offset(0, 1.65, 0)) <= 5.1
+}
+
+
+const cachedChestHasSpace: Map<string, boolean> = new Map()
+async function openIfChestHasSpace(bot: Bot, chestBlock: Block): Promise<typeof Window | undefined> {
+	const positionKey = chestBlock.position.toString()
+	if (cachedChestHasSpace.has(positionKey)) {
+		// if we remember this chest doesn't have any space, don't open it
+		if (!cachedChestHasSpace.get(positionKey))
+			return undefined
+	}
+	await gotoNear(bot, chestBlock.position, 5)
+	const chest = await bot.openContainer(chestBlock) as any as typeof Window | undefined
+	if (!chest) {
+		throw new Error('can\'t open chest')
+	}
+	console.log('chest.firstEmptyContainerSlot()', chest.firstEmptyContainerSlot())
+	const hasSpace = chest.firstEmptyContainerSlot() !== null
+	console.log('hasSpace', hasSpace)
+	if (!hasSpace) {
+		chest.close()
+		cachedChestHasSpace.set(positionKey, false)
+		return undefined
+	}
+	cachedChestHasSpace.set(positionKey, true)
+	return chest
+}
+
+function getPotentialChests(bot: Bot) {
+	return bot.findBlocks({
+		point: STORAGE_AREA,
+		matching: (block) => {
+			if (block.name !== 'chest') return false
+			// open the left part of double chests
+			if (block.getProperties().type !== 'left') return false
+			return true
+		},
+		// make sure we get all the chests
+		count: 10000000,
+		maxDistance: 64
+	})
+}
+
+async function openChestWithSpace(bot: Bot): Promise<typeof Window | undefined> {
+	const potentialChests = getPotentialChests(bot)
+	for (const chestPos of potentialChests) {
+		const chestBlock = bot.blockAt(chestPos)
+		if (!chestBlock) throw new Error('no chest block')
+		const chest = await openIfChestHasSpace(bot, chestBlock)
+		if (chest) {
+			return chest
+		}
+	}
+}
+
+async function depositInventory(bot: Bot) {
+	// first throw away our garbage
+	for (const item of bot.inventory.items()) {
+		if (!(['diamond_hoe', 'potato'].includes(item.name))) {
+			await bot.tossStack(item)
+		}
+	}
+
+
+	const chest = await openChestWithSpace(bot)
+	if (!chest) {
+		console.log('No chest with space!')
+		return
+	}
+
+	let cropItemType
+	let cropItemCount = 0
+	for (const item of bot.inventory.items()) {
+		if (item.name === 'potato') {
+			cropItemType = item.type
+			cropItemCount += item.count
+		}
+	}
+
+	if (cropItemType === undefined) {
+		console.log('No potato in inventory!')
+		return
+	}
+
+	try {
+		await chest.deposit(cropItemType, null, cropItemCount)
+	} catch {
+		// if it errored that means the destination is full, so try again
+		await depositInventory(bot)
+	}
 }

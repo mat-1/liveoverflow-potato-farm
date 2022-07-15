@@ -1,8 +1,5 @@
 import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.json'
 import mineflayer, { Bot } from 'mineflayer'
-import { Block } from 'prismarine-block'
-import { Item } from 'prismarine-item'
-import { Vec3 } from 'vec3'
 import { Client, Intents } from 'discord.js'
 import { startFarming } from './farm'
 
