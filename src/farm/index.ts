@@ -78,7 +78,7 @@ export async function startFarming(bot: Bot) {
 				return
 			}
 
-			console.log('.', tickCount)
+			console.log('.', tickCount, bot.entity.position.z)
 
 			paused = true
 
