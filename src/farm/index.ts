@@ -76,8 +76,8 @@ export async function startFarming(bot: Bot) {
 					willVisitAll = false
 			}
 
-			if (tickCount - lastPlacedTick < 5) {
-				// if we did stuff less than 5 ticks ago, don't do anything right now
+			if (tickCount - lastPlacedTick < 4) {
+				// if we did stuff less than 4 ticks ago, don't do anything right now
 				return
 			}
 
