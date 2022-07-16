@@ -76,8 +76,8 @@ export function gotoWithCheck(bot: Bot, pos: Vec3, isAtTarget: (pos: Vec3) => bo
 
 export async function goto(bot: Bot, pos: Vec3, sprint = true): Promise<void> {
 	const { x: targetX, z: targetZ } = pos.floored()
-	await gotoWithCheck(bot, pos, (pos: Vec3) => {
-		const { x: botX, z: botZ } = bot.entity.position.floored()
+	await gotoWithCheck(bot, pos, (botPos: Vec3) => {
+		const { x: botX, z: botZ } = botPos.floored()
 		return botX === targetX && botZ === targetZ
 	}, sprint)
 }
