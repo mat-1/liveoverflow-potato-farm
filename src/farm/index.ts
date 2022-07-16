@@ -53,6 +53,7 @@ export async function startFarming(bot: Bot) {
 		let index = 0
 		let paused = false
 		let tickCount = 0
+		let lastPlacedTick = 0
 
 		let tickListener = async () => {
 			tickCount++
@@ -72,11 +73,19 @@ export async function startFarming(bot: Bot) {
 				if (!canReachBlock(bot, block))
 					willVisitAll = false
 			}
+
+			if (tickCount - lastPlacedTick < 3) {
+				// if we did stuff less than 3 ticks ago, don't do anything right now
+				return
+			}
+
 			// if (index - 1 > botPositionIndex) willVisitAll = false
 			if (!willVisitAll) {
 				// wait until we get closer
 				return
 			}
+
+			lastPlacedTick = tickCount
 
 			console.log('.', tickCount, bot.entity.position.z)
 
