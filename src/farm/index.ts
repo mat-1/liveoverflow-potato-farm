@@ -55,6 +55,8 @@ export async function startFarming(bot: Bot) {
 		let tickCount = 0
 		let lastPlacedTick = 0
 
+		let startMs = Date.now()
+
 		let tickListener = async () => {
 			tickCount++
 
@@ -87,7 +89,7 @@ export async function startFarming(bot: Bot) {
 
 			lastPlacedTick = tickCount
 
-			console.log('.', tickCount, bot.entity.position.z)
+			console.log('.', tickCount, bot.entity.position.z, Date.now() - startMs)
 
 			paused = true
 
