@@ -34,14 +34,14 @@ export async function startFarming(bot: Bot) {
 			await new Promise(resolve => setTimeout(resolve, 60000))
 			return
 		}
-		const endLine = Math.min(startLine + STRIP_WIDTH - 1, FARM_WIDTH)
+		const endLine = Math.min(startLine + STRIP_WIDTH - 1, FARM_WIDTH - 1)
 		const centerLine = endLine + (startLine - endLine) / 2
 
 		console.log('startLine', startLine)
 		console.log('centerLine', centerLine)
 		console.log('endLine', endLine)
 
-		if (startLine > FARM_WIDTH)
+		if (startLine >= FARM_WIDTH)
 			break
 
 		// get rid of all the lines that we're gonna be farming from currentValidLines
@@ -167,6 +167,8 @@ export async function startFarming(bot: Bot) {
 
 		bot.canEat = true
 	}
+
+	console.log('finished farming :)')
 }
 
 
