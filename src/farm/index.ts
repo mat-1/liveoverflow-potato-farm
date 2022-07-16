@@ -56,8 +56,6 @@ export async function startFarming(bot: Bot) {
 
 		let tickListener = async () => {
 			tickCount++
-			if (tickCount % 4 !== 0) return
-			console.log('.')
 
 			// we pause while doing async stuff
 			if (paused) return
@@ -79,6 +77,8 @@ export async function startFarming(bot: Bot) {
 				// wait until we get closer
 				return
 			}
+
+			console.log('.', tickCount)
 
 			paused = true
 
