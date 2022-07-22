@@ -2,6 +2,7 @@ import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.js
 import mineflayer, { Bot } from 'mineflayer'
 import { Client, Intents } from 'discord.js'
 import { holdCrop, startFarming } from './farm'
+import { requestStatistics } from './utils'
 
 let [HOST, PORT] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
@@ -71,7 +72,7 @@ async function sendInDiscord(message: string) {
 function start() {
   let spawned = false
 
-  bot.on('spawn', () => {
+  bot.on('spawn', async () => {
     if (!spawned)
       // wait for chunks to load and stuff
       setTimeout(async () => {
@@ -80,9 +81,12 @@ function start() {
         }
       }, 4000)
 
+
     spawned = true
     console.log('spawned')
 
+    const stats = await requestStatistics(bot)
+    console.log(stats)
   })
 
   const USERNAME_REGEX = '(?:\\(.+\\)|\\[.+\\]|.)*?(\\w+)'
@@ -109,6 +113,7 @@ function start() {
     if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
       try {
         if (await holdCrop(bot)) {
+          // @ts-expect-error
           if (bot.usingHeldItem || !spawned || !bot.canEat) return
           console.log('eating')
           await bot.consume()

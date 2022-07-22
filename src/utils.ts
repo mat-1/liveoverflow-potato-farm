@@ -108,3 +108,28 @@ export async function eatUntilFull(bot: Bot) {
 	}
 }
 
+
+function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
+	const [{ entries: packetData }] = packet
+	if (bot.supportFeature('statisticsFormatChanges')) {
+		return packetData
+	}
+
+	return Object
+		.values(packetData)
+		.reduce((acc: any, { name, value }: any) => {
+			acc[name] = value
+			return acc
+		}, {}) as Record<string, number>
+}
+
+export async function requestStatistics(bot: Bot) {
+	if (bot.supportFeature('statisticsUsesPayload')) {
+		bot._client.write('client_command', { payload: 1 })
+	} else {
+		bot._client.write('client_command', { actionId: 1 })
+	}
+
+	const packet = await new Promise(resolve => bot._client.once('statistics', resolve))
+	return parseStatisticsPacket(bot, packet)
+}
