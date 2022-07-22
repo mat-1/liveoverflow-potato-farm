@@ -135,6 +135,6 @@ export async function requestStatistics(bot: Bot) {
 
 export async function getPotatoCount(bot: Bot) {
 	const stats = await requestStatistics(bot)
-	const potatoCount = stats.find((s: any) => s.categoryId === 0 && s.statisticId === 320)?.value ?? 0
+	const potatoCount = stats.find((s: any) => s.categoryId === 0 && s.statisticId === 320)?.value ?? null
 	return potatoCount
 }
