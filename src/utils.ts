@@ -111,7 +111,8 @@ export async function eatUntilFull(bot: Bot) {
 
 function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
 	const [{ entries: packetData }] = packet
-	if (bot.supportFeature('statisticsFormatChanges')) {
+	// if (bot.supportFeature('statisticsFormatChanges')) {
+	if (true) {
 		return packetData
 	}
 
@@ -125,7 +126,7 @@ function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
 
 export async function requestStatistics(bot: Bot) {
 	// if (bot.supportFeature('statisticsUsesPayload')) {
-	if (true) {
+	if (false) {
 		bot._client.write('client_command', { payload: 1 })
 	} else {
 		bot._client.write('client_command', { actionId: 1 })
