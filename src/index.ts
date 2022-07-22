@@ -2,7 +2,7 @@ import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.js
 import mineflayer, { Bot } from 'mineflayer'
 import { Client, Intents } from 'discord.js'
 import { holdCrop, startFarming } from './farm'
-import { requestStatistics } from './utils'
+import { getPotatoCount, requestStatistics } from './utils'
 
 let [HOST, PORT] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
@@ -84,9 +84,7 @@ function start() {
 
     spawned = true
     console.log('spawned')
-
-    const stats = await requestStatistics(bot)
-    console.log(stats)
+    updateDiscordStatus()
   })
 
   const USERNAME_REGEX = '(?:\\(.+\\)|\\[.+\\]|.)*?(\\w+)'
@@ -108,12 +106,10 @@ function start() {
   })
 
   bot.on('health', async () => {
-    // @ts-expect-error usingHeldItem doesn't have typings
     if (bot.usingHeldItem || !spawned || !bot.canEat) return
     if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
       try {
         if (await holdCrop(bot)) {
-          // @ts-expect-error
           if (bot.usingHeldItem || !spawned || !bot.canEat) return
           console.log('eating')
           await bot.consume()
@@ -141,8 +137,18 @@ function start() {
 
 start()
 
+async function updateDiscordStatus() {
+  if (bot) {
+    const potatoCount = await getPotatoCount(bot)
+    if (potatoCount && discord.user)
+      discord.user.setActivity('discord.js', { type: 'WATCHING', name: `${potatoCount} potatoes mined` })
+  }
+}
+setInterval(updateDiscordStatus, 60000)
+
 declare module 'mineflayer' {
   interface Bot {
     canEat: boolean
+    usingHeldItem: boolean
   }
 }

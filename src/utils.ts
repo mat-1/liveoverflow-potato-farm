@@ -48,7 +48,6 @@ export function gotoWithCheck(bot: Bot, pos: Vec3, isAtTarget: (pos: Vec3) => bo
 		}
 		lookAt(bot, pos.offset(0.5, 0, 0.5))
 
-		// @ts-expect-error usingHeldItem doesn't have typings
 		if (!bot.usingHeldItem && isAtTarget(bot.entity.position)) {
 			if (!cancelGoto)
 				throw Error('no cancelgoto??')
@@ -91,13 +90,11 @@ export async function gotoNear(bot: Bot, pos: Vec3, range: number, sprint = true
 
 
 export async function eatUntilFull(bot: Bot) {
-	// @ts-expect-error usingHeldItem doesn't have typings
 	if (bot.usingHeldItem || !bot.canEat) return
 	if ((bot.health < 20 && bot.food < 20) || bot.food < 10) {
 		try {
 			if (await holdCrop(bot)) {
 				while (bot.food < 20) {
-					// @ts-expect-error usingHeldItem doesn't have typings
 					if (bot.usingHeldItem || !bot.canEat) return
 					await bot.consume()
 				}
@@ -110,7 +107,6 @@ export async function eatUntilFull(bot: Bot) {
 
 
 function parseStatisticsPacket(bot: Bot, packet: any): Record<string, any> {
-	console.log(packet)
 	const { entries: packetData } = packet
 	// if (bot.supportFeature('statisticsFormatChanges')) {
 	if (true) {
@@ -135,4 +131,10 @@ export async function requestStatistics(bot: Bot) {
 
 	const packet = await new Promise(resolve => bot._client.once('statistics', resolve))
 	return parseStatisticsPacket(bot, packet)
+}
+
+export async function getPotatoCount(bot: Bot) {
+	const stats = await requestStatistics(bot)
+	const potatoCount = stats.find((s: any) => s.categoryId === 0 && s.statisticId === 320)?.value ?? 0
+	return potatoCount
 }
