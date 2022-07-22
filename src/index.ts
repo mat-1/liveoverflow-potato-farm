@@ -139,9 +139,9 @@ start()
 
 async function updateDiscordStatus() {
   if (bot) {
-    const potatoCount = await getPotatoCount(bot)
-    if (potatoCount && discord.user)
-      discord.user.setActivity(`${potatoCount} potatoes mined`, { type: 'WATCHING' })
+    const potatoCount: number | null = await getPotatoCount(bot)
+    if (potatoCount !== null && discord.user)
+      discord.user.setActivity(`${potatoCount.toLocaleString()} potatoes mined`, { type: 'WATCHING' })
   }
 }
 setInterval(updateDiscordStatus, 60000)
