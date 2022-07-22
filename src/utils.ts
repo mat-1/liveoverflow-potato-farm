@@ -124,7 +124,8 @@ function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
 }
 
 export async function requestStatistics(bot: Bot) {
-	if (bot.supportFeature('statisticsUsesPayload')) {
+	// if (bot.supportFeature('statisticsUsesPayload')) {
+	if (true) {
 		bot._client.write('client_command', { payload: 1 })
 	} else {
 		bot._client.write('client_command', { actionId: 1 })
