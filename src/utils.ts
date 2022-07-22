@@ -109,8 +109,9 @@ export async function eatUntilFull(bot: Bot) {
 }
 
 
-function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
-	const [{ entries: packetData }] = packet
+function parseStatisticsPacket(bot: Bot, packet: any): Record<string, any> {
+	console.log(packet)
+	const { entries: packetData } = packet
 	// if (bot.supportFeature('statisticsFormatChanges')) {
 	if (true) {
 		return packetData
@@ -121,7 +122,7 @@ function parseStatisticsPacket(bot: Bot, packet: any): Record<string, number> {
 		.reduce((acc: any, { name, value }: any) => {
 			acc[name] = value
 			return acc
-		}, {}) as Record<string, number>
+		}, {}) as any
 }
 
 export async function requestStatistics(bot: Bot) {
