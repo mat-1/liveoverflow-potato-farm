@@ -47,9 +47,7 @@ discord.on('messageCreate', m => {
 
 
 
-
-async function sendInDiscord(message: string) {
-  if (!discord) return
+async function getChannel() {
   const channel = discord.channels.cache.get(DISCORD_CHANNEL_ID) || (await discord.channels.fetch(DISCORD_CHANNEL_ID))
   if (!channel) {
     console.log('no channel')
@@ -59,6 +57,14 @@ async function sendInDiscord(message: string) {
     console.log('channel is not text')
     return
   }
+  return channel
+}
+
+async function sendInDiscord(message: string) {
+  if (!discord) return
+  const channel = await getChannel()
+  if (!channel) return
+
   await channel.send({
     content: message,
     allowedMentions: {
@@ -84,7 +90,17 @@ function start() {
 
     spawned = true
     console.log('spawned')
-    updateDiscordStatus()
+    try {
+      if (discord) {
+        await updateDiscordStatus()
+        await updateDiscordChannelDescription()
+      } else {
+        setTimeout(async () => {
+          await updateDiscordStatus()
+          await updateDiscordChannelDescription()
+        }, 5000)
+      }
+    } catch { }
   })
 
   const USERNAME_REGEX = '(?:\\(.+\\)|\\[.+\\]|.)*?(\\w+)'
@@ -96,7 +112,7 @@ function start() {
     if (m.startsWith(`<${bot.username}> `)) return
     if (WHISPER_REGEX.test(m)) return
     console.log('message', m)
-    sendInDiscord(m)
+    sendInDiscord(m.replace(/_/g, '\\_'))
   })
 
 
@@ -144,7 +160,24 @@ async function updateDiscordStatus() {
       discord.user.setActivity(`${potatoCount.toLocaleString()} potatoes mined`, { type: 'WATCHING' })
   }
 }
+
+let oldChannelTopic: string | null = null
+async function updateDiscordChannelDescription() {
+  if (!bot || !discord) return
+  const onlinePlayers: string[] = Object.keys(bot.players).map(p => p.replace(/_/g, '\\_'))
+  const channelTopic = (onlinePlayers.length > 0) ? `Online players: ${onlinePlayers.join(', ')}.` : 'No players online.'
+  if (!discord) return
+  const channel = await getChannel()
+  if (!channel) return
+  // don't send an api request if the topic is the same
+  if (oldChannelTopic === channelTopic) return
+  oldChannelTopic = channelTopic
+  await channel.setTopic(channelTopic)
+  console.log('updated topic:', channelTopic)
+}
+
 setInterval(updateDiscordStatus, 60000)
+setInterval(updateDiscordChannelDescription, 60000)
 
 declare module 'mineflayer' {
   interface Bot {
