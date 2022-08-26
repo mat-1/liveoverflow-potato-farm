@@ -77,7 +77,12 @@ function start() {
       // wait for chunks to load and stuff
       setTimeout(async () => {
         while (true) {
-          await startFarming(bot)
+          try {
+            await startFarming(bot)
+          } catch (e) {
+            console.error(e)
+            break
+          }
         }
       }, 4000)
 
