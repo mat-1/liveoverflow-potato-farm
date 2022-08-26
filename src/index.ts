@@ -94,6 +94,7 @@ function start() {
 
 
     spawned = true
+
     console.log('spawned')
     try {
       if (discord) {
@@ -106,6 +107,8 @@ function start() {
         }, 5000)
       }
     } catch { }
+
+    console.log('spawned', bot.entity.position)
   })
 
   const USERNAME_REGEX = '(?:\\(.+\\)|\\[.+\\]|.)*?(\\w+)'
@@ -177,8 +180,10 @@ async function updateDiscordChannelDescription() {
   // don't send an api request if the topic is the same
   if (oldChannelTopic === channelTopic) return
   oldChannelTopic = channelTopic
+  try {
   await channel.setTopic(channelTopic)
   console.log('updated topic:', channelTopic)
+  } catch (e) { console.error(e) )
 }
 
 setInterval(updateDiscordStatus, 60000)
