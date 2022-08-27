@@ -153,7 +153,7 @@ function start() {
     setTimeout(() => {
       bot = makeBot()
       start()
-    }, 1000)
+    }, 3500)
   })
 
   bot.canEat = true
@@ -181,17 +181,18 @@ async function updateDiscordChannelDescription() {
   if (oldChannelTopic === channelTopic) return
   oldChannelTopic = channelTopic
   try {
-  await channel.setTopic(channelTopic)
-  console.log('updated topic:', channelTopic)
-  } catch (e) { console.error(e) )
-}
-
-setInterval(updateDiscordStatus, 60000)
-setInterval(updateDiscordChannelDescription, 60000)
-
-declare module 'mineflayer' {
-  interface Bot {
-    canEat: boolean
-    usingHeldItem: boolean
+    await channel.setTopic(channelTopic)
+    console.log('updated topic:', channelTopic)
+  } catch (e) {
+    console.error(e) )
   }
-}
+
+  setInterval(updateDiscordStatus, 60000)
+  setInterval(updateDiscordChannelDescription, 60000)
+
+  declare module 'mineflayer' {
+    interface Bot {
+      canEat: boolean
+      usingHeldItem: boolean
+    }
+  }
