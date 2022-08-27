@@ -34,9 +34,6 @@ discord.on('messageCreate', m => {
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
   const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`.replace(/\n/g, ' ')
-  //   public static boolean isAllowedChatCharacter(char var0) {
-  //     return var0 != 167 && var0 >= ' ' && var0 != 127;
-  //  }
   if (msg.length > 256 || msg.startsWith('/') || /[\x00-\x1F\x7F\xA7]/.test(msg)) {
     m.react('🚫')
   } else {
@@ -81,19 +78,19 @@ function start() {
   bot.on('spawn', async () => {
     if (!spawned)
       // wait for chunks to load and stuff
-      setTimeout(async () => {
-        while (true) {
-          try {
-            await startFarming(bot)
-          } catch (e) {
-            console.error(e)
-            break
-          }
-        }
-      }, 4000)
+      // setTimeout(async () => {
+      //   while (true) {
+      //     try {
+      //       await startFarming(bot)
+      //     } catch (e) {
+      //       console.error(e)
+      //       break
+      //     }
+      //   }
+      // }, 4000)
 
 
-    spawned = true
+      spawned = true
 
     console.log('spawned')
     try {
@@ -181,17 +178,18 @@ async function updateDiscordChannelDescription() {
   if (oldChannelTopic === channelTopic) return
   oldChannelTopic = channelTopic
   try {
-  await channel.setTopic(channelTopic)
-  console.log('updated topic:', channelTopic)
-  } catch (e) { console.error(e) )
-}
-
-setInterval(updateDiscordStatus, 60000)
-setInterval(updateDiscordChannelDescription, 60000)
-
-declare module 'mineflayer' {
-  interface Bot {
-    canEat: boolean
-    usingHeldItem: boolean
+    await channel.setTopic(channelTopic)
+    console.log('updated topic:', channelTopic)
+  } catch (e) {
+    console.error(e) )
   }
-}
+
+  setInterval(updateDiscordStatus, 60000)
+  setInterval(updateDiscordChannelDescription, 60000)
+
+  declare module 'mineflayer' {
+    interface Bot {
+      canEat: boolean
+      usingHeldItem: boolean
+    }
+  }
