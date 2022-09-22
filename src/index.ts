@@ -61,13 +61,17 @@ async function getChannel() {
 }
 
 const queuedMessages: string[] = []
+let messageIndex = 0
+let sentMessageIndex = 0
 async function sendInDiscord(message: string) {
+  messageIndex += 1
+  let thisMessageIndex = messageIndex
   queuedMessages.push(message)
   if (!discord) return
   const channel = await getChannel()
   if (!channel) return
 
-  while (queuedMessages[0] !== message) {
+  while (sentMessageIndex - 1 <= thisMessageIndex) {
     await new Promise(r => setTimeout(r, 100))
   }
 
@@ -87,6 +91,7 @@ async function sendInDiscord(message: string) {
     }
   })
   queuedMessages.splice(0, sendingMessageCount)
+  sentMessageIndex = thisMessageIndex
 }
 
 function start() {
