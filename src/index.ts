@@ -73,7 +73,7 @@ async function sendInDiscord(message: string) {
 
   console.log('sentMessageIndex', sentMessageIndex, 'thisMessageIndex', thisMessageIndex)
 
-  while (sentMessageIndex - 1 <= thisMessageIndex) {
+  while (sentMessageIndex > thisMessageIndex) {
     await new Promise(r => setTimeout(r, 100))
   }
 
