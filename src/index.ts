@@ -71,10 +71,12 @@ async function sendInDiscord(message: string) {
     await new Promise(r => setTimeout(r, 100))
   }
 
-  let sendingMessageCount = 0
+  let sendingMessageCount = 1
 
-  if (queuedMessages.length > 3)
+  if (queuedMessages.length > 3) {
     message = queuedMessages.join('\n')
+    sendingMessageCount = queuedMessages.length
+  }
 
   await channel.send({
     content: message,
