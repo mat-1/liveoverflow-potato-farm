@@ -71,6 +71,8 @@ async function sendInDiscord(message: string) {
   const channel = await getChannel()
   if (!channel) return
 
+  console.log('sentMessageIndex', sentMessageIndex, 'thisMessageIndex', thisMessageIndex)
+
   while (sentMessageIndex - 1 <= thisMessageIndex) {
     await new Promise(r => setTimeout(r, 100))
   }
