@@ -60,10 +60,21 @@ async function getChannel() {
   return channel
 }
 
+const queuedMessages: string[] = []
 async function sendInDiscord(message: string) {
+  queuedMessages.push(message)
   if (!discord) return
   const channel = await getChannel()
   if (!channel) return
+
+  while (queuedMessages[0] !== message) {
+    await new Promise(r => setTimeout(r, 100))
+  }
+
+  let sendingMessageCount = 0
+
+  if (queuedMessages.length > 3)
+    message = queuedMessages.join('\n')
 
   await channel.send({
     content: message,
@@ -73,6 +84,7 @@ async function sendInDiscord(message: string) {
       roles: []
     }
   })
+  queuedMessages.splice(0, sendingMessageCount)
 }
 
 function start() {
