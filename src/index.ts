@@ -196,15 +196,16 @@ async function updateDiscordChannelDescription() {
     await channel.setTopic(channelTopic)
     console.log('updated topic:', channelTopic)
   } catch (e) {
-    console.error(e) )
+    console.error(e)
   }
 
   setInterval(updateDiscordStatus, 60000)
   setInterval(updateDiscordChannelDescription, 60000)
+}
 
-  declare module 'mineflayer' {
-    interface Bot {
-      canEat: boolean
-      usingHeldItem: boolean
-    }
+declare module 'mineflayer' {
+  interface Bot {
+    canEat: boolean
+    usingHeldItem: boolean
   }
+}
