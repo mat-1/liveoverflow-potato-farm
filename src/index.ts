@@ -61,42 +61,45 @@ async function getChannel() {
 }
 
 const queuedMessages: string[] = []
-let messageIndex = 0
-let sentMessageIndex = 0
 async function sendInDiscord(message: string) {
-  messageIndex += 1
-  let thisMessageIndex = messageIndex
-  queuedMessages.push(message)
   if (!discord) return
-  const channel = await getChannel()
-  if (!channel) return
+  queuedMessages.push(message)
+  updateDiscordFromQueue()
+}
 
-  console.log('sentMessageIndex', sentMessageIndex, 'thisMessageIndex', thisMessageIndex)
+let currentlySending = false
+// don't have this function running several times at once (technically not necessary but patches memory leak)
+let waitingToSend = false
+async function updateDiscordFromQueue() {
+  if (waitingToSend) return
+  waitingToSend = true
+  while (currentlySending || queuedMessages.length === 0) await new Promise(r => setTimeout(r, 100))
+  waitingToSend = false
+  currentlySending = true
 
-  while (sentMessageIndex + 1 < thisMessageIndex) {
-    await new Promise(r => setTimeout(r, 100))
-  }
-  // return if we already sent this message
-  if (sentMessageIndex >= thisMessageIndex) return
-
-  let sendingMessageCount = 1
-
+  let message: string
   if (queuedMessages.length > 3) {
-    const sendingMessages = queuedMessages.slice(0, 15)
+    const sendingMessages = queuedMessages.splice(0, 15)
     message = sendingMessages.join('\n')
-    sendingMessageCount = sendingMessages.length
+  } else {
+    message = queuedMessages.shift()!
   }
 
-  await channel.send({
-    content: message,
-    allowedMentions: {
-      parse: [],
-      users: [],
-      roles: []
-    }
-  })
-  queuedMessages.splice(0, sendingMessageCount)
-  sentMessageIndex = thisMessageIndex + sendingMessageCount - 1
+  try {
+    const channel = await getChannel()
+    if (!channel) return
+    await channel.send({
+      content: message,
+      allowedMentions: {
+        parse: [],
+        users: [],
+        roles: []
+      }
+    })
+  } catch (e) {
+    console.error(e)
+  }
+  currentlySending = false
 }
 
 function start() {
