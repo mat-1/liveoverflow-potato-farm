@@ -80,8 +80,9 @@ async function sendInDiscord(message: string) {
   let sendingMessageCount = 1
 
   if (queuedMessages.length > 3) {
-    message = queuedMessages.join('\n')
-    sendingMessageCount = queuedMessages.length
+    const sendingMessages = queuedMessages.slice(0, 15)
+    message = sendingMessages.join('\n')
+    sendingMessageCount = sendingMessages.length
   }
 
   await channel.send({
