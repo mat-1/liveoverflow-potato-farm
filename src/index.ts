@@ -76,6 +76,8 @@ async function sendInDiscord(message: string) {
   while (sentMessageIndex + 1 < thisMessageIndex) {
     await new Promise(r => setTimeout(r, 100))
   }
+  // return if we already sent this message
+  if (sentMessageIndex >= thisMessageIndex) return
 
   let sendingMessageCount = 1
 
@@ -94,7 +96,7 @@ async function sendInDiscord(message: string) {
     }
   })
   queuedMessages.splice(0, sendingMessageCount)
-  sentMessageIndex = thisMessageIndex
+  sentMessageIndex = thisMessageIndex + sendingMessageCount - 1
 }
 
 function start() {
