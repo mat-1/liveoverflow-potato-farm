@@ -30,13 +30,17 @@ discord.once('ready', () => {
 
 discord.login(DISCORD_TOKEN)
 
+let onServer = false
+
 discord.on('messageCreate', m => {
   if (m.channel.id !== DISCORD_CHANNEL_ID || m.author.bot) return
 
+  if (!onServer) {
+    m.react('👎')
+    return
+  }
+
   const msg = `${m.author.username}#${m.author.discriminator}: ${m.cleanContent.replace(/​/g, '')}`.replace(/\n/g, ' ')
-  //   public static boolean isAllowedChatCharacter(char var0) {
-  //     return var0 != 167 && var0 >= ' ' && var0 != 127;
-  //  }
   if (msg.length > 256 || msg.startsWith('/') || /[\x00-\x1F\x7F\xA7]/.test(msg)) {
     m.react('🚫')
   } else {
@@ -106,6 +110,7 @@ function start() {
   let spawned = false
 
   bot.on('spawn', async () => {
+    onServer = true
     if (!spawned)
       // wait for chunks to load and stuff
       setTimeout(async () => {
@@ -177,6 +182,7 @@ function start() {
   bot.on('error', console.log)
   bot.on('end', r => {
     console.log('kicked', r)
+    onServer = false
     setTimeout(() => {
       bot = makeBot()
       start()
@@ -199,8 +205,8 @@ async function updateDiscordStatus() {
 let oldChannelTopic: string | null = null
 async function updateDiscordChannelDescription() {
   if (!bot || !discord) return
-  const onlinePlayers: string[] = Object.keys(bot.players).map(p => p.replace(/_/g, '\\_'))
-  const channelTopic = (onlinePlayers.length > 0) ? `Online players: ${onlinePlayers.join(', ')}.` : 'No players online.'
+  const onlinePlayers: string[] = Object.keys(bot.players).map(p => p.replace(/_/g, '\\_')).sort((a, b) => a.localeCompare(b))
+  const channelTopic = (onlinePlayers.length > 0) ? `Online players (${onlinePlayers.length}): ${onlinePlayers.join(', ')}.` : 'No players online.'
   if (!discord) return
   const channel = await getChannel()
   if (!channel) return
