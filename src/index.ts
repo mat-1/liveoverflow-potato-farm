@@ -7,6 +7,8 @@ import { getPotatoCount, requestStatistics } from './utils'
 let [HOST, PORT] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
 
+process.env.DEBUG = 'prismarine-auth'
+
 function makeBot() {
   return mineflayer.createBot({
     host: HOST,
