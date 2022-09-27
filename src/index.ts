@@ -1,3 +1,5 @@
+process.env.DEBUG = 'prismarine-auth'
+
 import { DISCORD_TOKEN, DISCORD_CHANNEL_ID, SERVER_IP, EMAIL } from './config.json'
 import mineflayer, { Bot } from 'mineflayer'
 import { Client, Intents } from 'discord.js'
@@ -7,7 +9,6 @@ import { getPotatoCount, requestStatistics } from './utils'
 let [HOST, PORT] = SERVER_IP.split(':')
 if (!PORT) PORT = '25565'
 
-process.env.DEBUG = 'prismarine-auth'
 
 function makeBot() {
   return mineflayer.createBot({
