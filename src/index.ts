@@ -231,9 +231,9 @@ async function updateDiscordChannelDescription() {
     console.error(e)
   }
 
-  setInterval(updateDiscordStatus, 60000)
-  setInterval(updateDiscordChannelDescription, 60000)
 }
+setInterval(updateDiscordStatus, 60000)
+setInterval(updateDiscordChannelDescription, 60000)
 
 declare module 'mineflayer' {
   interface Bot {
