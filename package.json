@@ -22,6 +22,6 @@
     "vec3": "^0.1.7"
   },
   "resolutions": {
-    "prismarine-auth": "https://github.com/LucienHH/prismarine-auth#patch-2"
+    "prismarine-auth": "git+https://github.com/LucienHH/prismarine-auth#patch-2"
   }
 }
