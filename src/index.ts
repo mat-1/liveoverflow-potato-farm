@@ -77,14 +77,17 @@ let currentlySending = false
 // don't have this function running several times at once (technically not necessary but patches memory leak)
 let waitingToSend = false
 async function updateDiscordFromQueue() {
-  if (waitingToSend) return
+  if (waitingToSend) {
+    console.log('no need to make a new updateDiscordFromQueue')
+    return
+  }
   waitingToSend = true
   while (currentlySending || queuedMessages.length === 0) await new Promise(r => setTimeout(r, 100))
   waitingToSend = false
   currentlySending = true
 
   let message: string
-  if (queuedMessages.length > 3) {
+  if (queuedMessages.length >= 3) {
     const sendingMessages = queuedMessages.splice(0, 15)
     message = sendingMessages.join('\n')
   } else {
@@ -93,7 +96,12 @@ async function updateDiscordFromQueue() {
 
   try {
     const channel = await getChannel()
-    if (!channel) return
+    if (!channel) {
+      console.warn('no channel!')
+      currentlySending = false
+      return
+    }
+    console.log('ok!! sending message in discord:', message)
     await channel.send({
       content: message,
       allowedMentions: {
@@ -106,6 +114,7 @@ async function updateDiscordFromQueue() {
     console.error(e)
   }
   currentlySending = false
+  if (queuedMessages.length > 0) updateDiscordFromQueue()
 }
 
 function start() {
