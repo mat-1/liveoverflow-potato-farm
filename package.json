@@ -4,13 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npx npm-force-resolutions"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "npm-force-resolutions": "^0.0.10",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -21,7 +19,7 @@
     "prismarine-windows": "^2.4.4",
     "vec3": "^0.1.7"
   },
-  "resolutions": {
-    "prismarine-auth": "git+https://github.com/LucienHH/prismarine-auth#patch-2"
+  "overrides": {
+    "prismarine-auth": "https://github.com/LucienHH/prismarine-auth#patch-2"
   }
 }
