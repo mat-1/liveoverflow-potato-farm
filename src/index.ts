@@ -19,7 +19,8 @@ function makeBot() {
     // if it's not an email, offline mode
     auth: EMAIL.includes('@') ? 'microsoft' : 'mojang',
     checkTimeoutInterval: 60 * 1000,
-    viewDistance: 'short' // 8 chunks
+    viewDistance: 'short', // 8 chunks
+    disableChatSigning: true
   })
 }
 
