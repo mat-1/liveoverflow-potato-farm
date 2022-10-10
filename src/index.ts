@@ -189,6 +189,7 @@ function start() {
     }
   })
 
+  let ended = false
 
   // Log errors and kick reasons:
   bot.on('kicked', console.log)
@@ -196,13 +197,14 @@ function start() {
   bot.on('end', r => {
     console.log('kicked', r)
     onServer = false
+    ended = true
     setTimeout(() => {
       bot = makeBot()
       start()
     }, 3500)
   })
   setTimeout(() => {
-    if (!spawned && !onServer) {
+    if (!spawned && !onServer && !ended) {
       console.log('didn\'t spawn, restarting')
       try {
         bot.quit()
